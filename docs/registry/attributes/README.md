@@ -39,7 +39,7 @@ Currently, the following namespaces exist:
 - [Azure](azure.md)
 - [Browser](browser.md)
 - [Cassandra](cassandra.md)
-- [CI/CD](cicd.md)
+- [CICD](cicd.md)
 - [Client](client.md)
 - [Cloud](cloud.md)
 - [CloudEvents](cloudevents.md)
