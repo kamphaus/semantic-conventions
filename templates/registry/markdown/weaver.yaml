@@ -22,7 +22,7 @@ templates:
 acronyms:
   - AI
   - AWS
-  - CICD
+  - CI/CD
   - CloudEvents
   - CloudFoundry
   - CLR
