@@ -8,7 +8,7 @@ cascade:
 redirects:
   - { from: 'attributes-registry/*', to: 'registry/attributes/:splat' }
   - { from: 'database/*', to: 'db/:splat' }
-cSpell:ignore: semconv CI/CD
+cSpell:ignore: semconv
 auto_gen: below
 linkTitle: Semantic conventions
 --->
