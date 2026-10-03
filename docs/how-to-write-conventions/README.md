@@ -384,12 +384,12 @@ for additional details.
 Pick the instrument based on how the value behaves and how it will be aggregated:
 
 - **Histogram** - for distributions of individual measurements, such as operation
-  durations or payload sizes. For durations, consider recommending
+  durations or payload sizes. Consider recommending
   [`ExplicitBucketBoundaries`](https://opentelemetry.io/docs/specs/otel/metrics/api/#instrument-advisory-parameters)
   suitable for the expected value range (see [HTTP metrics](/docs/http/http-metrics.md)
   for an example).
-- **Counter** - for monotonically increasing values, such as the total number of
-  errors or the total CPU time.
+- **Counter** - for monotonically increasing values, such as the number of bytes
+  sent or the total CPU time.
 - **UpDownCounter** - for additive values that can increase and decrease, such as the
   number of active requests or the memory in use, where summing values across
   instances is meaningful.
@@ -413,8 +413,8 @@ Follow the [naming guidelines](/docs/general/naming.md), in particular the
 [metric naming rules](/docs/general/naming.md#metrics) and the
 [well-known instrument names](/docs/general/naming.md#instrument-naming).
 
-Use the same namespace as related attributes and spans. For example, the
-`http.server.request.duration` metric accompanies the HTTP server span.
+Use the same namespace as the related attributes. For example, the
+`http.server.request.duration` metric uses the `http.*` namespace.
 
 ##### Metric attributes
 
