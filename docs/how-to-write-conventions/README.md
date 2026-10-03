@@ -361,7 +361,10 @@ When not to define metrics:
 
 A metric definition should describe [what it measures](#what-does-this-metric-measure),
 the [instrument](#instrument) and [unit](#unit), its [name](#metric-name),
-and the list of applicable [attributes](#metric-attributes).
+the list of applicable [attributes](#metric-attributes), and its
+[requirement level](/docs/general/signal-requirement-level.md).
+Metrics that are expensive to collect, may pose a security or privacy risk,
+or are not essential for most applications should be `opt-in`.
 
 See the [Metrics semantic conventions](/docs/general/metrics.md) general guidelines
 for additional details.
@@ -415,21 +418,22 @@ Use the same namespace as related attributes and spans. For example, the
 
 ##### Metric attributes
 
-Every attribute multiplies the number of timeseries a metric produces. Only
-include attributes that are useful for grouping or filtering in aggregate.
+Each attribute multiplies the number of timeseries a metric produces by the number
+of distinct values it can take. Only include attributes that are useful for grouping
+or filtering in aggregate.
 See the [general metrics guidelines](/docs/general/metrics.md#general-guidelines).
 
-- All attributes on a metric must have low cardinality. Attributes that can have
-  high cardinality, or that may be controlled by an attacker (for example, values
-  derived from request headers), should not be used or should be `opt-in` with a
-  warning.
-- Include `error.type` on metrics that describe operations that can fail, so that
-  error rates can be derived from the same metric.
+- Attributes on a metric should have low cardinality.
 - Specify a [requirement level](/docs/general/attribute-requirement-level.md) for
-  each attribute. Attributes that may increase cardinality significantly or are
-  expensive to obtain should be `opt-in`.
-- Specify the [requirement level](/docs/general/signal-requirement-level.md) of the
-  metric itself. Metrics that are expensive to collect should be `opt-in`.
+  each attribute. Attributes that are still useful but may have high cardinality,
+  may be controlled by an attacker (for example, values derived from request headers),
+  are expensive to obtain, or may contain sensitive information should be `opt-in`.
+  Explain the risk in the attribute's `note`, as [HTTP metrics](/docs/http/http-metrics.md)
+  do for `server.address`.
+- For metrics that describe operations that can fail, follow
+  [Recording errors on metrics](/docs/general/recording-errors.md#recording-errors-on-metrics).
+
+Relation to span attributes:
 
 When a metric and a span describe the same operation, prefer the metric's
 attributes to be a subset of the span's attributes. This keeps the dimensions
