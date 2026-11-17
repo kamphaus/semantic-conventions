@@ -17,10 +17,42 @@ Attributes reserved for OpenTelemetry
 
 | Key | Stability | Value Type | Description | Example Values |
 | --- | --- | --- | --- | --- |
+| <a id="otel-span-kind" href="#otel-span-kind">`otel.span.kind`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | The [kind](https://opentelemetry.io/docs/specs/otel/trace/api/#spankind) of the span. [1] | `CLIENT`; `SERVER`; `PRODUCER` [(see more)](#otel-span-kind-values) |
+| <a id="otel-span-name" href="#otel-span-name">`otel.span.name`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | The name of the span. [2] | `GET /orders/{id}`; `run build` |
+| <a id="otel-span-parent-id" href="#otel-span-parent-id">`otel.span.parent.id`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | The span ID of the span's parent, as 16 lowercase hex characters. [3] | `00f067aa0ba902b7` |
 | <a id="otel-span-parent-origin" href="#otel-span-parent-origin">`otel.span.parent.origin`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | Determines whether the span has a parent span, and if so, [whether it is a remote parent](https://opentelemetry.io/docs/specs/otel/trace/api/#isremote) | `none`; `local`; `remote` [(see more)](#otel-span-parent-origin-values) |
 | <a id="otel-span-sampling-result" href="#otel-span-sampling-result">`otel.span.sampling_result`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | The result value of the sampler for this span | `DROP`; `RECORD_ONLY`; `RECORD_AND_SAMPLE` [(see more)](#otel-span-sampling-result-values) |
+| <a id="otel-span-start-time" href="#otel-span-start-time">`otel.span.start_time`</a> | ![Development](https://img.shields.io/badge/-development-blue) | int | The start time of the span, in nanoseconds since the UNIX epoch. [4] | `1794906000000000000` |
+| <a id="otel-span-trace-state" href="#otel-span-trace-state">`otel.span.trace_state`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | The [TraceState](https://opentelemetry.io/docs/specs/otel/trace/api/#tracestate) of the span, in W3C `tracestate` header format. [5] | `ot=th:c`; `ot=th:c;rv:9b8233f7e3a151,vendor=value` |
+| <a id="otel-span-type" href="#otel-span-type">`otel.span.type`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | The type of the span, identifying the semantic convention definition the span follows. [6] | `http.server.request`; `cicd.server.pipeline.run` |
 | <a id="otel-status-code" href="#otel-status-code">`otel.status_code`</a> | ![Stable](https://img.shields.io/badge/-stable-lightgreen) | string | Name of the code, either "OK" or "ERROR". MUST NOT be set if the status code is UNSET. | `OK`; `ERROR` [(see more)](#otel-status-code-values) |
 | <a id="otel-status-description" href="#otel-status-description">`otel.status_description`</a> | ![Stable](https://img.shields.io/badge/-stable-lightgreen) | string | Description of the Status if it has a value, otherwise not set. | `resource not found` |
+
+**[1] `otel.span.kind`:** Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) to carry the span kind outside of the span.
+
+**[2] `otel.span.name`:** Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) to carry the span name outside of the span.
+
+**[3] `otel.span.parent.id`:** Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) to carry the parent span ID outside of the span. MUST NOT be set if the span has no parent.
+
+**[4] `otel.span.start_time`:** Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) whose timestamp is not the span's start time.
+
+**[5] `otel.span.trace_state`:** Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) to carry the TraceState outside of the span, so that the values of [consistent probability sampling](https://opentelemetry.io/docs/specs/otel/trace/tracestate-probability-sampling/) are kept. MUST NOT be set if the TraceState is empty.
+
+**[6] `otel.span.type`:** Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) to carry the [span type](https://github.com/open-telemetry/opentelemetry-specification/blob/main/oteps/5233-span-type.md) outside of the span.
+
+---
+
+<a id="otel-span-kind-values"></a>
+
+`otel.span.kind` has the following list of well-known values. If one of them applies, then the respective value MUST be used; otherwise, a custom value MAY be used.
+
+| Value | Description | Stability |
+| --- | --- | --- |
+| `CLIENT` | The span describes a request to a remote service. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `CONSUMER` | The span describes a child of an asynchronous `PRODUCER` request. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `INTERNAL` | The span represents an internal operation within an application. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `PRODUCER` | The span describes the initiator of an asynchronous request. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `SERVER` | The span covers server-side handling of a remote request. | ![Development](https://img.shields.io/badge/-development-blue) |
 
 ---
 
@@ -65,10 +97,10 @@ Attributes used for OpenTelemetry component self-monitoring
 
 | Key | Stability | Value Type | Description | Example Values |
 | --- | --- | --- | --- | --- |
-| <a id="otel-component-name" href="#otel-component-name">`otel.component.name`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | A name uniquely identifying the instance of the OpenTelemetry component within its containing SDK instance. [1] | `otlp_grpc_span_exporter/0`; `custom-name` |
-| <a id="otel-component-type" href="#otel-component-type">`otel.component.type`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | A name identifying the type of the OpenTelemetry component. [2] | `batching_span_processor`; `com.example.MySpanExporter` [(see more)](#otel-component-type-values) |
+| <a id="otel-component-name" href="#otel-component-name">`otel.component.name`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | A name uniquely identifying the instance of the OpenTelemetry component within its containing SDK instance. [7] | `otlp_grpc_span_exporter/0`; `custom-name` |
+| <a id="otel-component-type" href="#otel-component-type">`otel.component.type`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | A name identifying the type of the OpenTelemetry component. [8] | `batching_span_processor`; `com.example.MySpanExporter` [(see more)](#otel-component-type-values) |
 
-**[1] `otel.component.name`:** Implementations SHOULD ensure a low cardinality for this attribute, even across application or SDK restarts.
+**[7] `otel.component.name`:** Implementations SHOULD ensure a low cardinality for this attribute, even across application or SDK restarts.
 E.g. implementations MUST NOT use UUIDs as values for this attribute.
 
 Implementations MAY achieve these goals by following a `<otel.component.type>/<instance-counter>` pattern, e.g. `batching_span_processor/0`.
@@ -82,7 +114,7 @@ With this implementation, for example the first Batching Span Processor would ha
 as `otel.component.name`, the second one `batching_span_processor/1` and so on.
 These values will therefore be reused in the case of an application restart.
 
-**[2] `otel.component.type`:** If none of the standardized values apply, implementations SHOULD use the language-defined name of the type.
+**[8] `otel.component.type`:** If none of the standardized values apply, implementations SHOULD use the language-defined name of the type.
 E.g. for Java the fully qualified classname SHOULD be used in this case.
 
 ---
@@ -118,9 +150,9 @@ Attributes used by non-OTLP exporters to represent OpenTelemetry Event's concept
 
 | Key | Stability | Value Type | Description | Example Values |
 | --- | --- | --- | --- | --- |
-| <a id="otel-event-name" href="#otel-event-name">`otel.event.name`</a> | ![Stable](https://img.shields.io/badge/-stable-lightgreen) | string | Identifies the class / type of event. [3] | `browser.mouse.click`; `device.app.lifecycle` |
+| <a id="otel-event-name" href="#otel-event-name">`otel.event.name`</a> | ![Stable](https://img.shields.io/badge/-stable-lightgreen) | string | Identifies the class / type of event. [9] | `browser.mouse.click`; `device.app.lifecycle` |
 
-**[3] `otel.event.name`:** This attribute SHOULD be used by non-OTLP exporters when destination does not support `EventName` or equivalent field. This attribute MAY be used by applications using existing logging libraries so that it can be used to set the `EventName` field by Collector or SDK components.
+**[9] `otel.event.name`:** This attribute SHOULD be used by non-OTLP exporters when destination does not support `EventName` or equivalent field. This attribute MAY be used by applications using existing logging libraries so that it can be used to set the `EventName` field by Collector or SDK components.
 
 ## OTel Scope Attributes
 

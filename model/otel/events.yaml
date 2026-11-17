@@ -1,0 +1,100 @@
+groups:
+  - id: event.otel.span.started
+    type: event
+    name: otel.span.started
+    stability: development
+    brief: >
+      Reports that a span has started.
+    note: |
+      The event MUST be emitted with the span's trace ID, span ID and trace
+      flags as its trace context. Its timestamp MUST be the span's start time.
+
+      Besides the attributes listed below, the event MUST carry the span's
+      sampling-relevant attributes, as defined by the semantic convention the
+      span follows, and MAY carry any other attribute the span has when it
+      starts. The span's attributes are recorded as event attributes with
+      unchanged keys and values.
+
+      See [span lifecycle events](/docs/otel/span-lifecycle-events.md) for how
+      consumers combine this event with the other lifecycle events of the
+      same span.
+    attributes:
+      - ref: otel.span.type
+        requirement_level: required
+      - ref: otel.span.name
+        requirement_level: required
+      - ref: otel.span.kind
+        requirement_level: required
+      - ref: otel.span.parent.id
+        requirement_level:
+          conditionally_required: If the span has a parent.
+      - ref: otel.span.trace_state
+        requirement_level:
+          conditionally_required: If the span's TraceState is not empty.
+
+  - id: event.otel.span.progress
+    type: event
+    name: otel.span.progress
+    stability: development
+    brief: >
+      Reports that a span is still running, and what changed since the
+      previous lifecycle event for the same span.
+    note: |
+      The event MUST be emitted with the span's trace ID, span ID and trace
+      flags as its trace context. Its timestamp is the time the event was
+      emitted.
+
+      The event SHOULD only carry the span attributes that were added or
+      changed since the previous lifecycle event for the same span. An event
+      without changes (a heartbeat) carries no span attributes. A missing
+      attribute means unchanged or unknown, never removed.
+
+      See [span lifecycle events](/docs/otel/span-lifecycle-events.md) for how
+      consumers combine this event with the other lifecycle events of the
+      same span.
+    attributes:
+      - ref: otel.span.name
+        requirement_level:
+          conditionally_required: If the span name changed since the previous lifecycle event for the same span.
+      - ref: otel.span.type
+        requirement_level: opt_in
+
+  - id: event.otel.span.ended
+    type: event
+    name: otel.span.ended
+    stability: development
+    brief: >
+      Reports that a span has ended, and carries the complete span.
+    note: |
+      The event MUST be emitted with the span's trace ID, span ID and trace
+      flags as its trace context. Its timestamp MUST be the span's end time.
+
+      The event MUST carry all of the span's attributes, recorded as event
+      attributes with unchanged keys and values. A consumer MUST be able to
+      build the span from this event alone, without any other lifecycle
+      event.
+
+      See [span lifecycle events](/docs/otel/span-lifecycle-events.md) for how
+      consumers combine this event with the other lifecycle events of the
+      same span.
+    attributes:
+      - ref: otel.span.type
+        requirement_level: required
+      - ref: otel.span.name
+        requirement_level: required
+      - ref: otel.span.kind
+        requirement_level: required
+      - ref: otel.span.start_time
+        requirement_level: required
+      - ref: otel.span.parent.id
+        requirement_level:
+          conditionally_required: If the span has a parent.
+      - ref: otel.span.trace_state
+        requirement_level:
+          conditionally_required: If the span's TraceState is not empty.
+      - ref: otel.status_code
+        requirement_level:
+          conditionally_required: If the span status is not `UNSET`.
+      - ref: otel.status_description
+        requirement_level:
+          conditionally_required: If the span status code is `ERROR` and the status has a description.

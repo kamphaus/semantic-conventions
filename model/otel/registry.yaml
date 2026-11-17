@@ -56,6 +56,74 @@ groups:
               stability: development
         brief: "Determines whether the span has a parent span, and if so, [whether it is a remote parent](https://opentelemetry.io/docs/specs/otel/trace/api/#isremote)"
         stability: development
+      - id: otel.span.type
+        type: string
+        brief: The type of the span, identifying the semantic convention definition the span follows.
+        note: >
+          Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) to carry the
+          [span type](https://github.com/open-telemetry/opentelemetry-specification/blob/main/oteps/5233-span-type.md)
+          outside of the span.
+        examples: ['http.server.request', 'cicd.server.pipeline.run']
+        stability: development
+      - id: otel.span.name
+        type: string
+        brief: The name of the span.
+        note: >
+          Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) to carry the span name outside of the span.
+        examples: ['GET /orders/{id}', 'run build']
+        stability: development
+      - id: otel.span.kind
+        type:
+          members:
+            - id: client
+              value: CLIENT
+              brief: The span describes a request to a remote service.
+              stability: development
+            - id: server
+              value: SERVER
+              brief: The span covers server-side handling of a remote request.
+              stability: development
+            - id: producer
+              value: PRODUCER
+              brief: The span describes the initiator of an asynchronous request.
+              stability: development
+            - id: consumer
+              value: CONSUMER
+              brief: The span describes a child of an asynchronous `PRODUCER` request.
+              stability: development
+            - id: internal
+              value: INTERNAL
+              brief: The span represents an internal operation within an application.
+              stability: development
+        brief: The [kind](https://opentelemetry.io/docs/specs/otel/trace/api/#spankind) of the span.
+        note: >
+          Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) to carry the span kind outside of the span.
+        stability: development
+      - id: otel.span.parent.id
+        type: string
+        brief: The span ID of the span's parent, as 16 lowercase hex characters.
+        note: >
+          Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) to carry the parent span ID outside of the span.
+          MUST NOT be set if the span has no parent.
+        examples: ['00f067aa0ba902b7']
+        stability: development
+      - id: otel.span.trace_state
+        type: string
+        brief: The [TraceState](https://opentelemetry.io/docs/specs/otel/trace/api/#tracestate) of the span, in W3C `tracestate` header format.
+        note: >
+          Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) to carry the TraceState outside of the span,
+          so that the values of [consistent probability sampling](https://opentelemetry.io/docs/specs/otel/trace/tracestate-probability-sampling/)
+          are kept.
+          MUST NOT be set if the TraceState is empty.
+        examples: ['ot=th:c', 'ot=th:c;rv:9b8233f7e3a151,vendor=value']
+        stability: development
+      - id: otel.span.start_time
+        type: int
+        brief: The start time of the span, in nanoseconds since the UNIX epoch.
+        note: >
+          Used on [span lifecycle events](/docs/otel/span-lifecycle-events.md) whose timestamp is not the span's start time.
+        examples: [1794906000000000000]
+        stability: development
   - id: registry.otel.scope
     type: attribute_group
     display_name: OTel Scope Attributes
